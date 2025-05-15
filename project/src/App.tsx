@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { UserRole } from './types';
 
@@ -8,6 +8,7 @@ import ClientLayout from './layouts/ClientLayout';
 import WriterLayout from './layouts/WriterLayout';
 import SupervisorLayout from './layouts/SupervisorLayout';
 import AuthLayout from './layouts/AuthLayout';
+import MainLayout from './layouts/MainLayout';
 
 // Auth pages
 import Login from './pages/auth/Login';
@@ -37,13 +38,13 @@ import FeedbackManagement from './pages/supervisor/FeedbackManagement';
 import PayoutManagement from './pages/supervisor/PayoutManagement';
 
 // Shared pages
+import HomePage from './pages/HomePage';
 import LandingPage from './pages/LandingPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PageLoader from './components/common/PageLoader';
 
 function App() {
   const { authUser, loading, checkAuth } = useAuth();
-  const location = useLocation();
 
   useEffect(() => {
     checkAuth();
@@ -56,14 +57,17 @@ function App() {
   // Routes that don't require authentication
   const publicRoutes = (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/landing" element={<LandingPage />} />
+      </Route>
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 
@@ -71,13 +75,14 @@ function App() {
   const clientRoutes = (
     <Routes>
       <Route element={<ClientLayout />}>
+        <Route path="/home" element={<HomePage />} />
         <Route path="/client/dashboard" element={<ClientDashboard />} />
         <Route path="/client/request/new" element={<NewResumeRequest />} />
         <Route path="/client/request/:id" element={<ResumeRequestDetail />} />
         <Route path="/client/resume-form/:category" element={<ResumeFormPage />} />
         <Route path="/client/profile" element={<ClientProfilePage />} />
       </Route>
-      <Route path="/" element={<Navigate to="/client/dashboard" replace />} />
+      <Route path="/" element={<Navigate to="/home" replace />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
@@ -86,13 +91,14 @@ function App() {
   const writerRoutes = (
     <Routes>
       <Route element={<WriterLayout />}>
+        <Route path="/home" element={<HomePage />} />
         <Route path="/writer/dashboard" element={<WriterDashboard />} />
         <Route path="/writer/requests" element={<AssignedRequests />} />
         <Route path="/writer/request/:id" element={<WriterResumeDetail />} />
         <Route path="/writer/wallet" element={<WalletPage />} />
         <Route path="/writer/profile" element={<WriterProfilePage />} />
       </Route>
-      <Route path="/" element={<Navigate to="/writer/dashboard" replace />} />
+      <Route path="/" element={<Navigate to="/home" replace />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
@@ -101,13 +107,14 @@ function App() {
   const supervisorRoutes = (
     <Routes>
       <Route element={<SupervisorLayout />}>
+        <Route path="/home" element={<HomePage />} />
         <Route path="/supervisor/dashboard" element={<SupervisorDashboard />} />
         <Route path="/supervisor/pending-assignments" element={<PendingAssignments />} />
         <Route path="/supervisor/writers" element={<WriterManagement />} />
         <Route path="/supervisor/feedback" element={<FeedbackManagement />} />
         <Route path="/supervisor/payouts" element={<PayoutManagement />} />
       </Route>
-      <Route path="/" element={<Navigate to="/supervisor/dashboard" replace />} />
+      <Route path="/" element={<Navigate to="/home" replace />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
